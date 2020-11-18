@@ -3,7 +3,7 @@ const router = express.Router();
 
 //Dasboard Handle
 router.get('/', (req, res) => {
-    res.render('dashboard')
+    res.render('home')
 });
 
 module.exports = router;
