@@ -1,0 +1,24 @@
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Patient Pin</th>
+            <th scope="col">Status</th>
+            <th scope="col">Compliance Status</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+        </tr>
+    </thead>
+    <tbody>
+            <% patients.forEach((patientJson) => { %>
+                <tr>
+                    <div scope="row">
+                        <td> <%= patientJson.patient.pin %> </td>
+                        <td> <%= patientJson.patient.state %> </td>
+                        <td></td>
+                        <td><%= (new Date(patientJson.patient.startDate)).toDateString() %></td>
+                        <td><%= (new Date(patientJson.patient.endDate)).toDateString() %></td>
+                    </div>
+                </tr>
+            <% }) %>  
+    </tbody>
+</table>
