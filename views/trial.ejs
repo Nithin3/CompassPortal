@@ -12,13 +12,12 @@
             <% patients.forEach((patientJson) => { %>
                 <tr>
                     <div scope="row">
-                        <% console.log(patientJson.patient.patientId) %> 
                         
                         <%# ---------------------------------------------------------------------- %>	
                         <%# TO DO: TRIAL ID HAS BEEN MOCKED HERE. NEED TO CHANGE THIS TO DYNAMIC %>
                         <%# ---------------------------------------------------------------------- %>		
 
-                        <td><a href="/trials/5a946ff566684905df608446/patients/<%= patientJson.patient.patientId %>"><%= patientJson.patient.pin %></a></td>
+                        <td><a href="/trials/5a946ff566684905df608446/patients/<%= patientJson.patient.pin %>"><%= patientJson.patient.pin %></a></td>
                         <td> <%= patientJson.patient.state %> </td>
                         <td></td>
                         <td><%= (new Date(patientJson.patient.startDate)).toDateString() %></td>
