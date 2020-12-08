@@ -14,6 +14,7 @@ const MAKE_BELIEVE = "MakeBelieve";
 const EMOTIONS = "Emotions";
 const RELAXATION = "Relaxation";
 const STAND_UP = "StandUp";
+const WEEKLY_SURVEY = 'Compass Weekly Survey';
 
 //activity state captions
 const PENDING = "pending";
@@ -34,4 +35,51 @@ function getPatientComplianceData(patientPin){
     .catch(error => {
         console.log(error);
     });
+}
+
+function generateComplianceChartData(queryResults){
+    var result = generateLabelsAndDataPropertyOfChart(queryResults);
+
+    var chartData = {
+        labels: result.labels,
+        datasets: [
+            {
+                label: DAILY_DIARY,
+                data: result.complianceData.dailyDiary,
+                backgroundColor: '#E74C3C'
+            },
+            {
+                label: WORRY_HEADS,
+                data: result.complianceData.worryHeads,
+                backgroundColor: '#2C3E50'
+            },
+            {
+                label: MAKE_BELIEVE,
+                data: result.complianceData.makeBelieve,
+                backgroundColor: "orange"
+            },
+            {
+                label: EMOTIONS,
+                data: result.complianceData.emotions,
+                backgroundColor: "green"
+            },
+            {
+                label: RELAXATION,
+                data: result.complianceData.relaxation,
+                backgroundColor: "brown"
+            },
+            {
+                label: STAND_UP,
+                data: result.complianceData.standUp,
+                backgroundColor: "yellow"
+            },
+            {
+                label: WEEKLY_SURVEY,
+                data: result.complianceData.weeklySurvey,
+                backgroundColor: "red"
+            }
+        ]
+    };
+    
+    return chartData;
 }
