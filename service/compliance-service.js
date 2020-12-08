@@ -17,6 +17,7 @@ const STAND_UP = "StandUp";
 const WEEKLY_SURVEY = 'Compass Weekly Survey';
 
 //activity state captions
+const CREATED = "created";
 const PENDING = "pending";
 const IN_PROGRESS = "in progress";
 const COMPLETED = "completed";
@@ -109,4 +110,71 @@ function generateLabelsAndDataPropertyOfChart(queryResults){
     complianceData = addDummyData(complianceData, chartLabels.length);
 
     return {labels: chartLabels, complianceData: complianceData};
+}
+
+function getIndividualActivityCompliance(obj, complianceData){
+    var totalActivities = 7;
+    let activityTitle = "";
+    axios.get(obj._links.activity_type.href)
+    .then(response => {
+        activityTitle = response.data.activity.title;
+    })
+    .catch(error => {
+        console.log(error);
+    });
+    if (obj.activity_instance.state === COMPLETED) {
+        switch (activityTitle.toLowerCase()){
+            case DAILY_DIARY.toLowerCase():
+                complianceData.dailyDiary.push(100/totalActivities);
+                break;
+            case WORRY_HEADS.toLowerCase():
+                complianceData.worryHeads.push(100/totalActivities);
+                break;
+            case MAKE_BELIEVE.toLowerCase():
+                complianceData.makeBelieve.push(100/totalActivities);
+                break;
+            case EMOTIONS.toLowerCase():
+                complianceData.emotions.push(100/totalActivities);
+                break;
+            case RELAXATION.toLowerCase():
+                complianceData.relaxation.push(100/totalActivities);
+                break;
+            case STAND_UP.toLowerCase():
+                complianceData.standUp.push(100/totalActivities);
+                break;
+            case WEEKLY_SURVEY.toLowerCase():
+                complianceData.weeklySurvey.push(100/totalActivities);
+                break;
+            default:
+            // do nothing
+        }
+    } else {
+        switch (activityTitle.toLowerCase()){
+            case DAILY_DIARY.toLowerCase():
+                complianceData.dailyDiary.push(0);
+                break;
+            case WORRY_HEADS.toLowerCase():
+                complianceData.worryHeads.push(0);
+                break;
+            case MAKE_BELIEVE.toLowerCase():
+                complianceData.makeBelieve.push(0);
+                break;
+            case EMOTIONS.toLowerCase():
+                complianceData.emotions.push(0);
+                break;
+            case RELAXATION.toLowerCase():
+                complianceData.relaxation.push(0);
+                break;
+            case STAND_UP.toLowerCase():
+                complianceData.standUp.push(0);
+                break;
+            case WEEKLY_SURVEY.toLowerCase():
+                complianceData.weeklySurvey.push(0);
+                break;
+            default:
+            // do nothing
+        }
+    }
+
+    return complianceData;
 }
