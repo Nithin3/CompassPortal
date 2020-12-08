@@ -28,7 +28,7 @@ function getPatientComplianceData(patientPin){
     .then(response => {
         arr = (response.data._embedded.activityInstances);
         arr.sort(function(a, b) {
-            return (a.activityInstance.startTime < b.activityInstance.startTime) ? -1 : ((a.activityInstance.startTime > b.activityInstance.startTime) ? 1 : 0);
+            return (a.activity_instance.startTime < b.activity_instance.startTime) ? -1 : ((a.activity_instance.startTime > b.activity_instance.startTime) ? 1 : 0);
         });
         return arr;
     })
@@ -80,6 +80,33 @@ function generateComplianceChartData(queryResults){
             }
         ]
     };
-    
+
     return chartData;
+}
+
+function generateLabelsAndDataPropertyOfChart(queryResults){
+    var weeks = [];
+    var complianceData = {
+        dailyDiary = [],
+        worryHeads = [],
+        makeBelieve = [],
+        emotions = [],
+        relaxation = [],
+        standUp = [],
+        weeklySurvey = []
+    }
+    queryResults.forEach((obj)=>{
+        // format the date-time relative to date
+        obj.activity_instance.startTime = moment.utc(obj.activity_instance.startTime).format(chartDateFormat);
+        obj.activity_instance.endTime = moment.utc(obj.activity_instance.endTime).format(chartDateFormat);
+        
+        //for labels
+        weeks.push(obj.activity_instance.startTime+' - '+obj.activity_instance.endTime);
+        complianceData = getIndividualActivityCompliance(obj, complianceData);
+    });
+
+    let chartLabels = getUniqueElements(weeks);
+    complianceData = addDummyData(complianceData, chartLabels.length);
+
+    return {labels: chartLabels, complianceData: complianceData};
 }
