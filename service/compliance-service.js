@@ -267,11 +267,10 @@ function generateComplianceActivities(queryResults){
     });
 
     return queryResults;
-
 }
 
 function getActivityInstanceState(activityInstance){
-    // check if the state is pending and whether the endDate is passed, if yes set the state as 'Expired'
+    // check if the state is created or pending and whether the endDate is passed, if yes set the state as 'Expired'
     if ((activityInstance.state === PENDING || activityInstance.state === CREATED) && moment().isAfter(new Date(activityInstance.endTime))){
         activityInstance.state = capitalize('expired');
     } else {
@@ -279,4 +278,37 @@ function getActivityInstanceState(activityInstance){
     }
 
     return activityInstance;
+}
+
+function getStatus(state){
+    // success | warning | info | danger
+    var status = "danger";
+
+    switch (state.toLowerCase()){
+        case COMPLETED:
+            status = "success";
+            break;
+        case CREATED:
+            status = "warning";
+            break;
+        case IN_PROGRESS:
+            status = "warning";
+            break;
+        case PENDING:
+            status = "info";
+            break;
+        case EXPIRED:
+            status = "danger";
+            break;
+        default:
+            // do nothing
+    }
+
+    return status;
+}
+
+function capitalize(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }
