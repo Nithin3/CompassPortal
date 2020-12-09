@@ -312,3 +312,37 @@ function capitalize(str) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 }
+
+function generateActivityStats(queryResults){
+    let stats = {completed: 0, created:0, inProgress: 0, expired: 0, pending:0};
+
+    queryResults.forEach(function(obj){
+
+        switch(obj.activity_instance.state.toLowerCase()){
+            case COMPLETED:
+                stats.completed++;
+                break;
+            case CREATED:
+                stats.created++;
+                break;
+            case IN_PROGRESS:
+                stats.inProgress++;
+                break;
+            case PENDING:
+                stats.pending++;
+                break;
+            case EXPIRED:
+                stats.expired++;
+                break;
+            default:
+                // do nothing
+        }
+    });
+
+    return stats;
+}
+
+module.exports.fetchPatientComplianceData = getPatientComplianceData;
+module.exports.fetchComplianceChartData = generateComplianceChartData;
+module.exports.fetchComplianceActivities = generateComplianceActivities;
+module.exports.fetchActivitiesStats = generateActivityStats;
