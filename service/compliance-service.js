@@ -248,3 +248,24 @@ function getUniqueElements(arr){
 
     return arr;
 }
+
+function generateComplianceActivities(queryResults){
+    queryResults.forEach(function(obj){
+        obj.activity_instance.startTime = moment(new Date(obj.activity_instance.startTime)).format(viewDateTimeFormat);
+        obj.activity_instance.endTime = moment(new Date(obj.activity_instance.endTime)).format(viewDateTimeFormat);
+
+        // modify/update the state of the instance
+        obj.activity_instance = getActivityInstanceState(obj.activity_instance);
+
+        obj.activity_instance.status = getStatus(obj.activity_instance.state);
+
+        if (obj.activity_instance.userSubmissionTime !== null) {
+            obj.activity_instance.userSubmissionTime = moment(new Date(obj.activity_instance.userSubmissionTime)).format(viewDateTimeFormat);
+        } else {
+            obj.activity_instance.userSubmissionTime = 'N/A';
+        }
+    });
+
+    return queryResults;
+
+}
