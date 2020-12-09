@@ -178,3 +178,65 @@ function getIndividualActivityCompliance(obj, complianceData){
 
     return complianceData;
 }
+
+function addDummyData(complianceData, totalLabels){
+    let loopCounter = 0;
+
+    //daily-diary
+    if(complianceData.dailyDiary.length < totalLabels){
+        loopCounter = totalLabels-complianceData.dailyDiary.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.dailyDiary.push(0);
+        }
+    }
+
+    //worry-heads
+    if(complianceData.worryHeads.length < totalLabels){
+        loopCounter = totalLabels-complianceData.worryHeads.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.worryHeads.push(0);
+        }
+    }
+
+    //make-believe
+    if(complianceData.makeBelieve.length < totalLabels){
+        loopCounter = totalLabels-complianceData.makeBelieve.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.makeBelieve.push(0);
+        }
+    }
+
+    //emotions
+    if(complianceData.emotions.length < totalLabels){
+        loopCounter = totalLabels-complianceData.emotions.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.emotions.push(0);
+        }
+    }
+
+    //Relaxation
+    if(complianceData.relaxation.length < totalLabels){
+        loopCounter = totalLabels-complianceData.relaxation.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.relaxation.push(0);
+        }
+    }
+
+    //StandUp
+    if(complianceData.standUp.length < totalLabels){
+        loopCounter = totalLabels-complianceData.standUp.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.standUp.push(0);
+        }
+    }
+
+    //weekly-survey
+    if(complianceData.weeklySurvey.length < totalLabels){
+        loopCounter = totalLabels-complianceData.weeklySurvey.length;
+        for(let i = 0; i < loopCounter; i++){
+            complianceData.weeklySurvey.push(0);
+        }
+    }
+
+    return complianceData;
+}
