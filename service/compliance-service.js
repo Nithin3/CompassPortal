@@ -269,3 +269,14 @@ function generateComplianceActivities(queryResults){
     return queryResults;
 
 }
+
+function getActivityInstanceState(activityInstance){
+    // check if the state is pending and whether the endDate is passed, if yes set the state as 'Expired'
+    if ((activityInstance.state === PENDING || activityInstance.state === CREATED) && moment().isAfter(new Date(activityInstance.endTime))){
+        activityInstance.state = capitalize('expired');
+    } else {
+        activityInstance.state = capitalize(activityInstance.state);
+    }
+
+    return activityInstance;
+}
