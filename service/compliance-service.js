@@ -240,3 +240,11 @@ function addDummyData(complianceData, totalLabels){
 
     return complianceData;
 }
+
+function getUniqueElements(arr){
+    arr = arr.filter (function (value, index, array) {
+        return array.indexOf (value) === index;
+    });
+
+    return arr;
+}
