@@ -1,0 +1,83 @@
+
+<div class="jumbotron">
+    <!-- Survey Graph Row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-info-outline">
+                <div class="card-header white-background">
+                    <h5>
+                        Activity Compliance
+                        {{complianceChartData}}
+                    </h5>
+                </div>
+                <div class="card-block white-background">
+                    <canvas id="complianceGraph" width="400" height="100px"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script type="text/javascript">
+    console.log("loooollllll")
+    console.log(JSON.parse('{{{ complianceChartData }}}'))
+    window.complianceChartData = JSON.parse('{{{ complianceChartData }}}');
+</script>
+
+<script>
+    var compliances = Object.create(window.complianceChartData);
+    var config = {
+        type: 'bar',
+        data: {},
+        options: {
+            animation: {
+                duration: 10
+            },
+            tooltips: {
+                mode: 'label',
+                callbacks: {
+                    label: function(tooltipItem, data){
+                        return data.datasets[tooltipItem.datasetIndex].label + ": " + tooltipItem.yLabel + "%"; 
+                    }
+                }
+            },
+            scales:{
+                xAxes: [
+                    {
+
+                        stacked: true,
+                        gridLines: { display: false },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Activities By Week',
+                            fontStyle: 'bold'
+                        }
+                    }
+                ],
+                yAxes: [
+                    {
+                        stacked: true,
+                        position: 'left',
+                        ticks: {
+                            max: 100,
+                            min: 0
+                        },
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: '% Complied',
+                            fontStyle: "bold"
+                        }
+                    }
+                ]
+            },
+            legend: {display:true}
+        }
+    };
+    
+    var complianceChartCanvas = document.getElementById('complianceGraph').getContext('2d');
+    config.data = compliances;
+    new Chart(complianceChartCanvas, config);
+</script>

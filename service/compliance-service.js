@@ -23,14 +23,19 @@ const IN_PROGRESS = "in progress";
 const COMPLETED = "completed";
 const EXPIRED = "expired";
 
+
 function getPatientComplianceData(patientPin){
     var arr = []
+    console.log(patientPin);
+
     axios.get('http://localhost:8080/CompassAPI/rest/activityinstances?patientPin='+patientPin)
     .then(response => {
-        arr = (response.data._embedded.activityInstances);
+        arr = (response.data._embedded.activity_instances);
+        
         arr.sort(function(a, b) {
             return (a.activity_instance.startTime < b.activity_instance.startTime) ? -1 : ((a.activity_instance.startTime > b.activity_instance.startTime) ? 1 : 0);
         });
+        
         return arr;
     })
     .catch(error => {
@@ -88,24 +93,30 @@ function generateComplianceChartData(queryResults){
 function generateLabelsAndDataPropertyOfChart(queryResults){
     var weeks = [];
     var complianceData = {
-        dailyDiary = [],
-        worryHeads = [],
-        makeBelieve = [],
-        emotions = [],
-        relaxation = [],
-        standUp = [],
-        weeklySurvey = []
+        dailyDiary: [],
+        worryHeads: [],
+        makeBelieve: [],
+        emotions: [],
+        relaxation: [],
+        standUp: [],
+        weeklySurvey: []
     }
+    
     queryResults.forEach((obj)=>{
+
         // format the date-time relative to date
-        obj.activity_instance.startTime = moment.utc(obj.activity_instance.startTime).format(chartDateFormat);
-        obj.activity_instance.endTime = moment.utc(obj.activity_instance.endTime).format(chartDateFormat);
-        
+        if(obj.activity_instance.startTime != undefined){
+            obj.activity_instance.startTime = moment(obj.activity_instance.startTime).format(chartDateFormat);
+        }
+        if(obj.activity_instance.endTime != undefined){
+            obj.activity_instance.endTime = moment(obj.activity_instance.endTime).format(chartDateFormat);
+        }
+
         //for labels
         weeks.push(obj.activity_instance.startTime+' - '+obj.activity_instance.endTime);
         complianceData = getIndividualActivityCompliance(obj, complianceData);
     });
-
+    
     let chartLabels = getUniqueElements(weeks);
     complianceData = addDummyData(complianceData, chartLabels.length);
 
