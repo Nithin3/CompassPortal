@@ -26,7 +26,6 @@ const EXPIRED = "expired";
 
 function getPatientComplianceData(patientPin){
     var arr = []
-    console.log(patientPin);
 
     axios.get('http://localhost:8080/CompassAPI/rest/activityinstances?patientPin='+patientPin)
     .then(response => {
@@ -126,13 +125,18 @@ function generateLabelsAndDataPropertyOfChart(queryResults){
 function getIndividualActivityCompliance(obj, complianceData){
     var totalActivities = 7;
     let activityTitle = "";
-    axios.get(obj._links.activity_type.href)
-    .then(response => {
-        activityTitle = response.data.activity.title;
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    
+    var url = obj._links.activity_type[0].href
+    if(url && url != "nullactivities/NULL"){
+        axios.get(url)
+        .then(response => {
+            activityTitle = response.data.activity.title;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+    
     if (obj.activity_instance.state === COMPLETED) {
         switch (activityTitle.toLowerCase()){
             case DAILY_DIARY.toLowerCase():
@@ -197,7 +201,7 @@ function addDummyData(complianceData, totalLabels){
     if(complianceData.dailyDiary.length < totalLabels){
         loopCounter = totalLabels-complianceData.dailyDiary.length;
         for(let i = 0; i < loopCounter; i++){
-            complianceData.dailyDiary.push(0);
+            complianceData.dailyDiary.push(1);
         }
     }
 
@@ -205,7 +209,7 @@ function addDummyData(complianceData, totalLabels){
     if(complianceData.worryHeads.length < totalLabels){
         loopCounter = totalLabels-complianceData.worryHeads.length;
         for(let i = 0; i < loopCounter; i++){
-            complianceData.worryHeads.push(0);
+            complianceData.worryHeads.push(2);
         }
     }
 
@@ -213,7 +217,7 @@ function addDummyData(complianceData, totalLabels){
     if(complianceData.makeBelieve.length < totalLabels){
         loopCounter = totalLabels-complianceData.makeBelieve.length;
         for(let i = 0; i < loopCounter; i++){
-            complianceData.makeBelieve.push(0);
+            complianceData.makeBelieve.push(6);
         }
     }
 
@@ -325,7 +329,7 @@ function capitalize(str) {
 }
 
 function generateActivityStats(queryResults){
-    let stats = {completed: 0, created:0, inProgress: 0, expired: 0, pending:0};
+    let stats = {completed: 0, created: 0, inProgress: 0, expired: 0, pending:0};
 
     queryResults.forEach(function(obj){
 

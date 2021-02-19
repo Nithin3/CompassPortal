@@ -37,7 +37,7 @@
                                     Patient Count
                                 </th>
                                 <td>
-                                    trial_data
+                                    <%= patients.length %> 
                                 </td>
                             </tr>
                             <tr>
@@ -45,7 +45,7 @@
                                     Noncompliant Count
                                 </th>
                                 <td>
-                                    trial_data
+                                    <%= non_compliant %>
                                 </td>
                             </tr>
                         </tbody>
@@ -55,13 +55,13 @@
         </div>
         <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
             <div class="card">
-                <canvas id="trialChart" height="107px" width="200"></canvas>
+                <canvas id="trialChart" height="87px" width="200"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<table class="table">
+<table id="patients-table" class="table table-hover">
     <thead class="thead-dark">
         <tr>
             <th scope="col">Patient Pin</th>
@@ -72,7 +72,8 @@
         </tr>
     </thead>
     <tbody>
-            <% patients.forEach((patientJson) => { %>
+            <% var i = 0 %> 
+            <% for(var i = 0; i < patients.length; i++){ %> 
                 <tr>
                     <div scope="row">
                         
@@ -80,13 +81,56 @@
                         <%# TO DO: TRIAL ID HAS BEEN MOCKED HERE. NEED TO CHANGE THIS TO DYNAMIC %>
                         <%# ---------------------------------------------------------------------- %>		
 
-                        <td><a href="/trials/5a946ff566684905df608446/patients/<%= patientJson.patient.pin %>"><%= patientJson.patient.pin %></a></td>
-                        <td> <%= patientJson.patient.state %> </td>
-                        <td></td>
-                        <td><%= (new Date(patientJson.patient.startDate)).toDateString() %></td>
-                        <td><%= (new Date(patientJson.patient.endDate)).toDateString() %></td>
+                        <td><a href="/trials/5a946ff566684905df608446/patients/<%= patients[i].patient.pin %>"><%= patients[i].patient.pin %></a></td>
+                        <td> <%= patients[i].patient.state %> </td>
+                        <td> <%= compliantStatus[i] %> </td>
+                        <td><%= (new Date(patients[i].patient.startDate)).toDateString() %></td>
+                        <td><%= (new Date(patients[i].patient.endDate)).toDateString() %></td>
                     </div>
                 </tr>
-            <% }) %>  
+                
+            <% } %>  
     </tbody>
 </table>
+
+<% compliantCount = compliant %>
+<% partiallyCompliantCount = partially_compliant %>
+<% nonCompliantCount = non_compliant %>
+
+<script>
+    var compliCount = <%= compliantCount %>;
+    var partiallyCompliCount = <%= partiallyCompliantCount %>;
+    var nonCompliCount = <%= nonCompliantCount %>;
+
+    var data = {
+        labels: [
+            'Compliant',
+            'Partially-Compliant',
+            'Non-Compliant'
+        ],
+        datasets: [{
+            data: [compliCount, partiallyCompliCount, nonCompliCount],
+            backgroundColor: [
+                '#2ECC40',
+                '#FFDC00',
+                '#FF4136'
+            ]
+        }]
+    };
+    var ctx = document.getElementById('trialChart').getContext('2d');
+    // var columnStart = 3;
+    // var columnPin = 0;
+    // var patientsTable = $('#patients-table').DataTable({
+    //     order: [[columnStart, 'desc'], [columnPin, 'desc']],
+    //     paging: true
+    // });
+    // patientsTable.draw();
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        animation: {
+            animateScale: true
+        }
+    });
+</script>

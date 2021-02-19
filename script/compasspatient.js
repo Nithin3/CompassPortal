@@ -1,6 +1,4 @@
 (function patient(){
-    console.log("HEY YOU")
-    console.log(window.complianceChartData)
     var compliances = Object.create(window.complianceChartData);
     var config = {
         type: 'bar',
