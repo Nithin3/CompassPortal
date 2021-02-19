@@ -328,31 +328,61 @@ function capitalize(str) {
     });
 }
 
-function generateActivityStats(queryResults){
-    let stats = {completed: 0, created: 0, inProgress: 0, expired: 0, pending:0};
+async function generateActivityStats(patientPin){
+    let compl = 0;
+    let stats = {completed: 0, created: 0, inProgress: 0, expired: 0, pending:0, numOfActivityInstances:0};
+    let response = undefined;
 
-    queryResults.forEach(function(obj){
+    try{
+        response = await axios.get('http://localhost:8080/CompassAPI/rest/patients/'+patientPin);
+    }catch(err){
+        console.log(err);
+    }
+    
+    if(!response.data._links.activity_instance){
+        return stats;
+    }
 
-        switch(obj.activity_instance.state.toLowerCase()){
-            case COMPLETED:
-                stats.completed++;
-                break;
-            case CREATED:
-                stats.created++;
-                break;
-            case IN_PROGRESS:
-                stats.inProgress++;
-                break;
-            case PENDING:
-                stats.pending++;
-                break;
-            case EXPIRED:
-                stats.expired++;
-                break;
-            default:
-                // do nothing
+    let activityInstancesLinks = response.data._links.activity_instance;
+    stats.numOfActivityInstances = activityInstancesLinks.length;
+
+    for(let i = 0; i < activityInstancesLinks.length; i++){
+        let link = activityInstancesLinks[i];
+
+        if(link.href === 'http://localhost:8080/CompassAPI/rest/activityinstances/5cbfbade555ab30a12474e24'
+            || link.href === 'http://localhost:8080/CompassAPI/rest/activityinstances/5cbfbc58555ab30a12474e27'){
+            continue;
         }
-    });
+
+        try{
+            let activityInstance = (await axios.get(link.href)).data.activity_instance;
+            switch(activityInstance.state.toLowerCase()){
+                
+                case COMPLETED:
+                    stats.completed++;
+                    compl++;
+                    break;
+                case CREATED:
+                    stats.created++;
+                    break;
+                case IN_PROGRESS:
+                    stats.inProgress++;
+                    break;
+                case PENDING:
+                    stats.pending++;
+                    break;
+                case EXPIRED:
+                    stats.expired++;
+                    break;
+                default:
+                    // do nothing
+            }
+        }catch(err){
+            console.log("ERROR FOR PATIENT PIN = " +patientPin)
+            console.log(err);
+        }
+      
+    }
 
     return stats;
 }
