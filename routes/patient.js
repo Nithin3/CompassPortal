@@ -56,7 +56,6 @@ router.get('/trials/5a946ff566684905df608446/patients/:patientPin', async (req, 
     }
     
     var dateArray = getDates(new Date(selectedWeekStartDate), (new Date(selectedWeekStartDate)).addDays(6));
-    let week = [];
     let formattedDates = []
     let givenActivities = []
     let completedActivities = []
@@ -98,9 +97,6 @@ router.get('/trials/5a946ff566684905df608446/patients/:patientPin', async (req, 
         givenActivities.push(givenTasks);
         completedActivities.push(completedTasks);
     }
-
-    console.log(week);
-    console.log(formattedDates);
     res.render('patient.ejs', {
         dates: JSON.stringify(formattedDates),
         givenActivities: givenActivities,
