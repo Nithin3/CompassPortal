@@ -1,0 +1,68 @@
+
+<div class="jumbotron">
+    <!-- Survey Graph Row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-info-outline">
+                <div class="card-header white-background">
+                    <h5>
+                        Activity Compliance
+                    </h5>
+                </div>
+                <div class="card-block white-background">
+                    <canvas id="complianceGraph" width="400" height="100px"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<% dts = dates%>
+
+<script>
+    var ctx = document.getElementById("complianceGraph");
+    let formattedDates = <%- dates %>;
+    console.log(formattedDates)
+    let givenTasks = [<%- givenActivities %>];
+    let completedTasks = [<%- completedActivities%>];
+
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: formattedDates,
+            datasets: [{
+                label: '# of instances due',
+                data: givenTasks,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)'
+                ],
+                borderWidth: 1
+            },
+            {
+                label: '# of instances Completed',
+                data: completedTasks,
+                backgroundColor: [
+                    'rgba(100, 255, 50, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(50,200,50,1)'
+                ],
+                borderWidth: 1
+            }         
+                    ]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+</script>
