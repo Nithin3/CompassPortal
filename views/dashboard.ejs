@@ -9,13 +9,16 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
+        
+        <% for(var i = 0; i < trials.length; i++){ %> 
+            <tr>
+                <th scope="row"><a href="/dashboard/trial/<%= trials[i].trialId %>"><%=trials[i].title%></a></th>
+                <td><%= trials[i].targetCount %> </td>
+                <td><%= trials[i].patients.length %></td>
+                <td><%- new Date(trials[i].startDate) %></td>
+                <td><%- new Date(trials[i].endDate) %></td>
+            </tr>
             
-            <th scope="row"><a href="/dashboard/trial/5a946ff566684905df608446">Compass</a></th>
-            <td>100</td>
-            <td>19</td>
-            <td>2018-02-26</td>
-            <td>2018-04-25</td>
-        </tr>
+        <% } %>  
     </tbody>
 </table>

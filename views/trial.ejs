@@ -4,16 +4,25 @@
             <div class="card">
                 <div class="card-block">
                     <h4 class="card-title text-center">
-                        Compass Trial
+                        <%= trial.title %> 
                     </h4>
                     <table class="table">
                         <tbody>
+                            
                             <tr>
                                 <th scope="row">
                                     ID
                                 </th>
                                 <td>
-                                    trial_data
+                                    <%= trial.trialId %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    Description
+                                </th>
+                                <td>
+                                    <%= trial.description %>
                                 </td>
                             </tr>
                             <tr>
@@ -21,7 +30,7 @@
                                     Start Date
                                 </th>
                                 <td>
-                                    trial_data
+                                    <%- new Date(trial.startDate).toDateString() %>
                                 </td>
                             </tr>
                             <tr>
@@ -29,7 +38,7 @@
                                     End Date
                                 </th>
                                 <td>
-                                    trial_data
+                                    <%- new Date(trial.endDate).toDateString() %>
                                 </td>
                             </tr>
                             <tr>
@@ -37,7 +46,7 @@
                                     Patient Count
                                 </th>
                                 <td>
-                                    <%= patients.length %> 
+                                    <%= trial.patients.length %> 
                                 </td>
                             </tr>
                             <tr>
@@ -55,7 +64,7 @@
         </div>
         <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
             <div class="card">
-                <canvas id="trialChart" height="87px" width="200"></canvas>
+                <canvas id="trialChart" height="100px" width="200"></canvas>
             </div>
         </div>
     </div>
@@ -81,7 +90,7 @@
                         <%# TO DO: TRIAL ID HAS BEEN MOCKED HERE. NEED TO CHANGE THIS TO DYNAMIC %>
                         <%# ---------------------------------------------------------------------- %>		
 
-                        <td><a href="/trials/5a946ff566684905df608446/patients/<%= patients[i].patient.pin %>"><%= patients[i].patient.pin %></a></td>
+                        <td><a href="/trials/<%= trialId %>/patients/<%= patients[i].patient.pin %>"><%= patients[i].patient.pin %></a></td>
                         <td> <%= patients[i].patient.state %> </td>
                         <td> <%= compliantStatus[i] %> </td>
                         <td><%= (new Date(patients[i].patient.startDate)).toDateString() %></td>
