@@ -32,6 +32,7 @@
             labels: formattedDates,
             datasets: [{
                 label: '# of instances due',
+                lineTension: 0, 
                 data: givenTasks,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)'
@@ -43,6 +44,7 @@
             },
             {
                 label: '# of instances Completed',
+                lineTension: 0, 
                 data: completedTasks,
                 backgroundColor: [
                     'rgba(100, 255, 50, 0.2)'
@@ -55,6 +57,11 @@
                     ]
         },
         options: {
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
             scales: {
                 yAxes: [{
                     ticks: {
