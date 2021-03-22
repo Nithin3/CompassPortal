@@ -41,21 +41,35 @@
     <tbody>
             <% var i = 0 %> 
             <% for(var i = 0; i < activity_instances.length; i++){ %> 
-                <tr>
-                    <div scope="row">
-                        
-                        <td> <%= activity_instances[i].extended.activityTypeName %> </td>
-                        <td> <%= activity_instances[i].activityInstanceId %> </td>
-                        <% let startDate = new Date(activity_instances[i].startTime) %>
-                        <% let endDate = new Date(activity_instances[i].endTime)%>
-                        <td><%- startDate.toDateString() + " " + startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getSeconds()  %></td>
-                        <td><%- endDate.toDateString() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds()  %></td>
-                        
-                        <td><%= (new Date(activity_instances[i].userSubmissionTime)) %></td>
-                        <td> <%= activity_instances[i].state %> </td>
-                    </div>
-                </tr>
-                
+                <% if(activity_instances[i].state === 'completed'){%>
+                    <tr style="background-color: rgba(74, 216, 27, 0.2);">
+                        <div scope="row">
+                            <td> <%= activity_instances[i].extended.activityTypeName %> </td>
+                            <td> <%= activity_instances[i].activityInstanceId %> </td>
+                            <% let startDate = new Date(activity_instances[i].startTime) %>
+                            <% let endDate = new Date(activity_instances[i].endTime)%>
+                            <td><%- startDate.toDateString() + " " + startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getSeconds()  %></td>
+                            <td><%- endDate.toDateString() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds()  %></td>
+                            
+                            <td><%= (new Date(activity_instances[i].userSubmissionTime)) %></td>
+                            <td> <%= activity_instances[i].state %> </td>
+                        </div>
+                    </tr>
+                <% }else{ %>
+                    <tr style="background-color: rgba(216, 27, 52, 0.2);">
+                        <div scope="row">
+                            <td> <%= activity_instances[i].extended.activityTypeName %> </td>
+                            <td> <%= activity_instances[i].activityInstanceId %> </td>
+                            <% let startDate = new Date(activity_instances[i].startTime) %>
+                            <% let endDate = new Date(activity_instances[i].endTime)%>
+                            <td><%- startDate.toDateString() + " " + startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getSeconds()  %></td>
+                            <td><%- endDate.toDateString() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds()  %></td>
+                            
+                            <td><%= (new Date(activity_instances[i].userSubmissionTime)) %></td>
+                            <td> <%= activity_instances[i].state %> </td>
+                        </div>
+                    </tr>
+                <% } %>
             <% } %>  
     </tbody>
 </table>
