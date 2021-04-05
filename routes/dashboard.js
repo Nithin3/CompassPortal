@@ -58,7 +58,7 @@ router.get('/dashboard/trial/:trialId', async (req, res) => {
             
             var stats = await complianceService.fetchActivitiesStats(patientPin);
             var percent = (stats.completed/(stats.numOfActivityInstances))*100;
-            
+            console.log(patientPin + " " +percent);
             if(percent >= 70){
                 compliant++;
                 compliantStatus.push("Compliant");
