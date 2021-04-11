@@ -18,8 +18,29 @@
                         </h5>   
                     </div>
                 </div>
+
+                <hr>
+
+                <div class="card-header white-background">
+                    <div>
+                        <h5>Compliance Graph</h5>   
+                    </div>
+                </div>
+
                 <div class="card-block white-background">
                     <canvas id="complianceGraph" width="400" height="100px"></canvas>
+                </div>
+
+                <hr>
+
+                <div class="card-header white-background">
+                    <div>
+                        <h5>Clinical Score Graph</h5>   
+                    </div>
+                </div>
+
+                <div class="card-block white-background">
+                    <canvas id="scoreGraph" width="400" height="100px"></canvas>
                 </div>
             </div>
 
@@ -132,4 +153,45 @@
             }
         }
     });
+
+    var ctx1 = document.getElementById("scoreGraph");
+    let clinicalScores = [<%- scores %>];
+
+    var myChart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: formattedDates,
+            datasets: [
+                {
+                    label: "Clinical Score",
+                    lineTension: 0, 
+                    data: clinicalScores,
+                    fill:false,
+                    backgroundColor: [
+                    'rgba(100, 255, 50, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(50,200,50,1)'
+                    ],
+                    borderWidth: 1
+                }         
+            ]
+        },
+        options: {
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        stepSize: 10
+                    }
+                }]
+            }
+        }
+    })
+
 </script>

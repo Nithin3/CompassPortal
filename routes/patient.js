@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const complianceService = require('../service/compliance-service');
+const localMongoDBUri = 'mongodb://localhost:27017/compassapi_db';
+const MongoClient = require('mongodb').MongoClient;
 
 //Handling patient route. Display details about patient
 
@@ -105,9 +107,47 @@ router.get('/trials/5a946ff566684905df608446/patients/:patientPin', async (req, 
     })
 });
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 //Activity compliance detail
 router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-compliance-detail', async (req, res) => {
+    
+    let patientScores = undefined;
+    let scoreData = undefined;
+    let scores = [];
+
+    // Connect to the db
+    MongoClient.connect(localMongoDBUri, async function (err, db) {
+        await db.collection('patientScores', async function (err, collection) {
+            await collection.find().toArray(async function(err, items) {
+                if(err) throw err;    
+                patientScores = await items;  
+                for(let i = 0; i < patientScores.length; i++){
+                    
+                    if(patientScores[i].patientPin == req.params.patientPin){
+                        scoreData = patientScores[i].scoreData;
+                    }
+                }
+            });
+        });     
+    });
+    await sleep(100);
+    scores.push(0);
+    for(let i = 0; i < scoreData.length; i++){
+        data = scoreData[i];
+        if(data.activityScores.length > 1){
+            let sum = 0;
+            for(let j = 0; j < data.activityScores.length; j++){
+                sum += data.activityScores[j].score; 
+            }
+            scores.push(sum/data.activityScores.length);
+        }else{
+            scores.push(data.activityScores[0].score);
+        }
+        
+    }
 
     try{
         response = await axios.get('http://localhost:8080/CompassAPI/rest/patients/'+req.params.patientPin);
@@ -180,7 +220,8 @@ router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-comp
         dates: JSON.stringify(formattedDates),
         givenActivities: givenActivities,
         completedActivities: completedActivities,
-        activity_instances: activity_instances
+        activity_instances: activity_instances,
+        scores: scores
     })
 });
 
