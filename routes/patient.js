@@ -118,14 +118,32 @@ router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-comp
     let scoreData = undefined;
     let scores = [];
 
+    let apiResponse = undefined;
+
+    try{
+        apiResponse = await axios.get("http://localhost:8080/CompassAPI/rest/activities?domain=Preventive Anxiety");
+    }catch(err){
+        console.log(err);
+    }
+
+    let activities = apiResponse.data._embedded.activities;
+    let activityIds = [];
+    let activityNames = [];
+
+    for(let i = 0; i < activities.length; i++){
+        activityIds.push(activities[i].activity.activityId);
+        activityNames.push(activities[i].activity.title);
+        scores.push([]);
+        scores[i].push(null);
+    }
+
     // Connect to the db
     MongoClient.connect(localMongoDBUri, async function (err, db) {
         await db.collection('patientScores', async function (err, collection) {
             await collection.find().toArray(async function(err, items) {
                 if(err) throw err;    
                 patientScores = await items;  
-                for(let i = 0; i < patientScores.length; i++){
-                    
+                for(let i = 0; i < patientScores.length; i++){      
                     if(patientScores[i].patientPin == req.params.patientPin){
                         scoreData = patientScores[i].scoreData;
                     }
@@ -134,7 +152,8 @@ router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-comp
         });     
     });
     await sleep(100);
-    scores.push(0);
+
+    let avgScore = [0]
     for(let i = 0; i < scoreData.length; i++){
         data = scoreData[i];
         if(data.activityScores.length > 1){
@@ -142,9 +161,29 @@ router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-comp
             for(let j = 0; j < data.activityScores.length; j++){
                 sum += data.activityScores[j].score; 
             }
-            scores.push(sum/data.activityScores.length);
+            avgScore.push(sum/data.activityScores.length);
         }else{
-            scores.push(data.activityScores[0].score);
+            avgScore.push(data.activityScores[0].score);
+        }
+        
+    }
+
+    for(let i = 0; i < scoreData.length; i++){
+        data = scoreData[i];
+        for(let m = 0; m < data.activityScores.length; m++){
+            for(let j = 0; j < activityIds.length; j++){
+                if(//activityIds[j] == data.activityScores[m].activityId &&
+                    activityNames[j] == data.activityScores[m].activityName){
+                        for(let k = 0; k < scores.length; k++){
+                            if(j == k){
+                                scores[j].push(data.activityScores[m].score);
+                            }else{
+                                scores[k].push(null);
+                            }
+                        }
+                    break;
+                }
+            }
         }
         
     }
@@ -221,7 +260,10 @@ router.post('/trials/5a946ff566684905df608446/patients/:patientPin/activity-comp
         givenActivities: givenActivities,
         completedActivities: completedActivities,
         activity_instances: activity_instances,
-        scores: scores
+        scores: scores,
+        avgScore: avgScore,
+        activityNames: activityNames,
+        activityIds: activityIds
     })
 });
 
