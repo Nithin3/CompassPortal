@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"1f5c4f4b7640451496ab303edbff63f9","collectionName":"dailyDiarySituations"}
