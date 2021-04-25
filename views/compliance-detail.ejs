@@ -1,0 +1,311 @@
+<div class="jumbotron">
+    <!-- Survey Graph Row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-info-outline">
+                <div class="card-header white-background">
+                    <div>
+                        <h5>Activity Compliance Detail of patient: <%= patientPin  %> 
+                        <span class="float-right">
+                            <form action="/trials/5a946ff566684905df608446/patients/<%= patientPin %>/activity-compliance-detail" method="POST">
+                                <input type="date" id="start" name="startDate">
+                                <input type="date" id="end" name="endDate">
+                                
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-list-alt"></i> View detail</button>
+                                
+                            </form>
+                        </span>
+                        </h5>   
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="card-header white-background">
+                    <div>
+                        <h5>Compliance Graph</h5>   
+                    </div>
+                </div>
+
+                <div class="card-block white-background">
+                    <canvas id="complianceGraph" width="400" height="100px"></canvas>
+                </div>
+
+                <hr>
+
+                <div class="card-header white-background">
+                    <div>
+                        <h5>Activity Score Graph</h5>   
+                    </div>
+                </div>
+
+                <div class="card-block white-background">
+                    <canvas id="scoreGraph" width="400" height="100px"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<table id="instances-table" class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Activity</th>
+            <th scope="col">Activity Id</th>
+            <th scope="col">Start time</th>
+            <th scope="col">End time</th>
+            <th scope="col">User submission time</th>
+            <th scope="col">State</th>
+        </tr>
+    </thead>
+    <tbody>
+            <% var i = 0 %> 
+            <% for(var i = 0; i < activity_instances.length; i++){ %> 
+                <% if(activity_instances[i].state === 'completed'){%>
+                    <tr style="background-color: rgba(74, 216, 27, 0.2);">
+                        <div scope="row">
+                            <td> <%= activity_instances[i].extended.activityTypeName %> </td>
+                            <td> <%= activity_instances[i].activityInstanceId %> </td>
+                            <% let startDate = new Date(activity_instances[i].startTime) %>
+                            <% let endDate = new Date(activity_instances[i].endTime)%>
+                            <td><%- startDate.toDateString() + " " + startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getSeconds()  %></td>
+                            <td><%- endDate.toDateString() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds()  %></td>
+                            
+                            <td><%= (new Date(activity_instances[i].userSubmissionTime)) %></td>
+                            <td> <%= activity_instances[i].state %> </td>
+                        </div>
+                    </tr>
+                <% }else{ %>
+                    <tr style="background-color: rgba(216, 27, 52, 0.2);">
+                        <div scope="row">
+                            <td> <%= activity_instances[i].extended.activityTypeName %> </td>
+                            <td> <%= activity_instances[i].activityInstanceId %> </td>
+                            <% let startDate = new Date(activity_instances[i].startTime) %>
+                            <% let endDate = new Date(activity_instances[i].endTime)%>
+                            <td><%- startDate.toDateString() + " " + startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getSeconds()  %></td>
+                            <td><%- endDate.toDateString() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds()  %></td>
+                            <% if(activity_instances[i].userSubmissionTime == null){ %>
+                                <td>Not submitted</td>
+                            <% }else{ %>  
+                                <td><%= (new Date(activity_instances[i].userSubmissionTime)) %></td>
+                            <% } %> 
+                            
+                            <td> <%= activity_instances[i].state %> </td>
+                        </div>
+                    </tr>
+                <% } %>
+            <% } %>  
+    </tbody>
+</table>
+
+<% dts = dates%>
+
+<script>
+    var ctx = document.getElementById("complianceGraph");
+    let formattedDates = <%- dates %>;
+    let givenTasks = [<%- givenActivities %>];
+    let completedTasks = [<%- completedActivities%>];
+
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: formattedDates,
+            datasets: [{
+                label: '# of instances due',
+                lineTension: 0, 
+                data: givenTasks,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)'
+                ],
+                borderWidth: 1
+            },
+            {
+                label: '# of instances Completed',
+                lineTension: 0, 
+                data: completedTasks,
+                backgroundColor: [
+                    'rgba(100, 255, 50, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(50,200,50,1)'
+                ],
+                borderWidth: 1
+            }         
+                    ]
+        },
+        options: {
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        stepSize: 1
+                    }
+                }]
+            }
+        }
+    });
+
+    var ctx1 = document.getElementById("scoreGraph");
+    let clinicalScores = [<%- scores %>];
+
+    var myChart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: formattedDates,
+            datasets: [
+                {
+                    label: 'SWAP',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[0] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'black'
+                    ],
+                    borderColor: [
+                        'black'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'FaceIt',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[1] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'yellow'
+                    ],
+                    borderColor: [
+                        'yellow'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'Relaxation',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[2] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'blue'
+                    ],
+                    borderColor: [
+                        'blue'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'WorryHeads',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[3] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'red'
+                    ],
+                    borderColor: [
+                        'red'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'MakeBelieve',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[4] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'pink'
+                    ],
+                    borderColor: [
+                        'pink'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'Emotions',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[5] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'brown'
+                    ],
+                    borderColor: [
+                        'brown'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'StandUp',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[6] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'siler'
+                    ],
+                    borderColor: [
+                        'silver'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'DailyDiary',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- scores[7] %>],
+                    fill:false,
+                    backgroundColor: [
+                    'gold'
+                    ],
+                    borderColor: [
+                        'gold'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'Average',
+                    lineTension: 0,
+                    spanGaps: true,
+                    data: [<%- avgScore %>],
+                    fill:false,
+                    backgroundColor: [
+                    'violet'
+                    ],
+                    borderColor: [
+                        'violet'
+                    ],
+                    borderWidth: 1
+                }  
+
+            ]
+        },
+        options: {
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        stepSize: 10
+                    }
+                }]
+            }
+        }
+    })
+
+</script>

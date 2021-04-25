@@ -29,6 +29,8 @@
     "hbs": "^4.1.1",
     "method-override": "^3.0.0",
     "moment": "^2.29.1",
+    "mongodb": "^2.2.33",
+    "mongoose": "^5.12.3",
     "url": "^0.11.0"
   }
 }

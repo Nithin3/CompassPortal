@@ -1,6 +1,7 @@
 //dot env config
 require('dotenv').config();
 
+const { mongoose } = require('./db.js');
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
